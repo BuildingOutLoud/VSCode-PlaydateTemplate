@@ -1,28 +1,87 @@
-import "dvd" -- DEMO
-local dvd = dvd(1, -1) -- DEMO
+import "CoreLibs/object"
+import "CoreLibs/graphics"
+import "CoreLibs/timer"
+import "CoreLibs/sprites"
+import "CoreLibs/crank"
+import "CoreLibs/ui"
+import "CoreLibs/math"
+import "CoreLibs/animator"
 
+import "supports"
+import "save"
+
+------------------------------ VARS ---------------------------------------------------
 local gfx <const> = playdate.graphics
-local font = gfx.font.new('font/Mini Sans 2X') -- DEMO
+local geom <const> = playdate.geometry
 
-local function loadGame()
-	playdate.display.setRefreshRate(50) -- Sets framerate to 50 fps
-	math.randomseed(playdate.getSecondsSinceEpoch()) -- seed for math.random
-	gfx.setFont(font) -- DEMO
+local saveData = {}
+
+local crankIndicatorShown = false
+
+
+
+
+------------------------------ Support Functions ---------------------------------------------------
+
+
+
+
+------------------------------ Init ---------------------------------------------------
+function initialize()
+	LoadDataFromDisk()
+
+	--menu stuff
+	-- local systemMenu = playdate.getSystemMenu()
+	-- systemMenu:addCheckmarkMenuItem("dark mode", saveData.DarkMode, SetDarkMode)
+	-- systemMenu:addCheckmarkMenuItem("easy", saveData.easy, SetDifficulty)
+	-- systemMenu:addMenuItem("Clr Highscore", ClearHighScore)
+
+	--misc init
+	playdate.display.setRefreshRate(50)
+	math.randomseed(playdate.getSecondsSinceEpoch())
+	font = playdate.graphics.font.new("font/Roobert-20-Medium-Outlined")
+	playdate.graphics.setFont(font)
+	playdate.display.setInverted(false)
+
+	--sprites
+	-- local rocketBirdImage = gfx.image.new("images/rocketbird")
+	-- rocketBirdSprite = gfx.sprite.new(rocketBirdImage)
+	-- rocketBirdSprite:add()
+	-- rocketBirdSprite:setZIndex(10)
+	-- rocketBirdSprite:setCollideRect(0, 0, rocketBirdSprite:getSize())
 end
 
-local function updateGame()
-	dvd:update() -- DEMO
+initialize()
+
+
+
+
+------------------------------ Main Update Loop Functions ---------------------------------------------------
+function CrankNotification()
+	if playdate.isCrankDocked() then
+		if crankIndicatorShown == false then
+			playdate.ui.crankIndicator:start()
+			crankIndicatorShown = true
+		end
+		playdate.ui.crankIndicator:update()
+	else
+		crankIndicatorShown = false
+	end
 end
 
-local function drawGame()
-	gfx.clear() -- Clears the screen
-	dvd:draw() -- DEMO
-end
 
-loadGame()
 
+
+------------------------------ Update ---------------------------------------------------
 function playdate.update()
-	updateGame()
-	drawGame()
-	playdate.drawFPS(0,0) -- FPS widget
+	playdate.timer.updateTimers()
+
+	gfx.sprite.update()
+
+	-- debug stuff
+	--gfx.drawTextAligned(ballSpeed, 200, 200, kTextAlignment.center)
+	playdate.drawFPS(369, 212)
+
+	-- crank dock notification
+	CrankNotification()
 end
