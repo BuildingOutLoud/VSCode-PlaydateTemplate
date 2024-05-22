@@ -10,7 +10,9 @@ import "CoreLibs/animator"
 import "supports"
 import "save"
 
------------------------------- VARS ---------------------------------------------------
+--[[-----------------------------------------------------------------------------------
+-------------------------------- VARS
+-------------------------------------------------------------------------------------]]
 local gfx <const> = playdate.graphics
 local geom <const> = playdate.geometry
 
@@ -20,13 +22,9 @@ local crankIndicatorShown = false
 
 
 
-
------------------------------- Support Functions ---------------------------------------------------
-
-
-
-
------------------------------- Init ---------------------------------------------------
+--[[-----------------------------------------------------------------------------------
+-------------------------------- Init
+-------------------------------------------------------------------------------------]]
 function initialize()
 	LoadDataFromDisk()
 
@@ -55,24 +53,9 @@ initialize()
 
 
 
-
------------------------------- Main Update Loop Functions ---------------------------------------------------
-function CrankNotification()
-	if playdate.isCrankDocked() then
-		if crankIndicatorShown == false then
-			playdate.ui.crankIndicator:start()
-			crankIndicatorShown = true
-		end
-		playdate.ui.crankIndicator:update()
-	else
-		crankIndicatorShown = false
-	end
-end
-
-
-
-
------------------------------- Update ---------------------------------------------------
+--[[-----------------------------------------------------------------------------------
+-------------------------------- Update
+-------------------------------------------------------------------------------------]]
 function playdate.update()
 	playdate.timer.updateTimers()
 
@@ -83,5 +66,7 @@ function playdate.update()
 	playdate.drawFPS(369, 212)
 
 	-- crank dock notification
-	CrankNotification()
+	if pd.isCrankDocked() then
+		pd.ui.crankIndicator:draw();
+	end
 end
